@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 
 import { API_URL } from "./src/config/config";
 import { Button, Alert, View } from 'react-native'
+import axios from "axios";
 
 const theme = {
   ...DefaultTheme,
@@ -25,64 +26,24 @@ const App = () => {
     InterLight: require("./assets/fonts/Inter-Light.ttf"),
   });
 
+  const [publishableKey, setPublishableKey] = useState('')
 
-  const [ready, setReady] = useState(false)
-  const { initPaymentSheet } = useStripe();
+  useEffect(() => {
+    const getPublishabkeKey = async () => {
+      try {
+        const res = await axios.post('http://10.4.102.31:6000/api/payment/checkout/session')
+        const { publishableKey } = await res.data;
 
-
-
-  // const fetchPaymentSheetParams = async () => {
-  //   const response = await fetch(`${API_URL}/payment-sheet`, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //   });
-  //   console.log(response.json())
-  //   const { paymentIntent, ephemeralKey, customer } = await response.json();
-  //   console.log(ephemeralKey, paymentIntent, customer)
-  //   return {
-  //     paymentIntent,
-  //     ephemeralKey,
-  //     customer,
-  //   };
-  // }
-
-  // const initializePaymentSheet = async () => {
-  //   const {
-  //     paymentIntent,
-  //     ephemeralKey,
-  //     customer,
-  //   } = await fetchPaymentSheetParams();
-
-  //   const { error } = await initPaymentSheet({
-  //     merchantDisplayName: "Example Inc.",
-  //     customerId: customer,
-  //     customerEphemeralKeySecret: ephemeralKey,
-  //     paymentIntentClientSecret: paymentIntent,
-  //     allowsDelayedPaymentMethods: true,
-  //     defaultBillingDetails: {
-  //       name: 'Jeremy T. Nguth',
-  //     }
-  //   });
-  //   if (error) {
-  //     Alert.alert(`Error code: ${error.code}`, error.message)
-  //   } else {
-  //     setReady(true)
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   initializePaymentSheet()
-  //   console.log("Rennderinggm", initializePaymentSheet())
-  // }, [])
-
-
-
-
+        setPublishableKey(publishableKey)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getPublishabkeKey()
+  }, [])
   return (
     <StripeProvider
-      publishableKey='pk_test_51MKMKvFFjUyheLLVZzoxImHRGfvAlZEBHzqGEXBOsgfHCTQrjocOEENXTekseSARA7b2DIxPyZ0zZq2nCKYBEMMC00BZMtbWM4'
+      publishableKey={publishableKey}
     >
       <NavigationContainer>
         <ProductState>

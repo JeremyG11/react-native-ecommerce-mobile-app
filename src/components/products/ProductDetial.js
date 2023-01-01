@@ -31,7 +31,7 @@ const ProductDetial = ({ product }) => {
       >
         <Text
           style={{
-            fontFamily: FONTS.semiBold,
+            // fontFamily: FONTS.semiBold,
             fontSize: SIZES.small,
             color: COLORS.primary,
           }}
@@ -40,7 +40,7 @@ const ProductDetial = ({ product }) => {
         </Text>
         <Text
           style={{
-            fontFamily: FONTS.regular,
+            // fontFamily: FONTS.regular,
             fontSize: SIZES.small - 2,
             color: COLORS.secondary,
             marginTop: 3,

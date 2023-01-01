@@ -33,22 +33,22 @@ const DetailsDesc = ({ data }) => {
         <Text
           style={{
             fontSize: SIZES.font,
-            fontFamily: FONTS.semiBold,
+            // fontFamily: FONTS.semiBold,
             color: COLORS.primary,
           }}
         >
           Description
         </Text>
         <View
-          style = {{
+          style={{
             marginTop: SIZES.base,
           }}
         >
           <Text
-            style = {{
+            style={{
               color: COLORS.secondary,
               fontSize: SIZES.small,
-              fontFamily: FONTS.regular,
+              // fontFamily: FONTS.regular,
               lineHeight: SIZES.large,
             }}
           >
@@ -58,7 +58,7 @@ const DetailsDesc = ({ data }) => {
               style={{
                 color: COLORS.primary,
                 fontSize: SIZES.small,
-                fontFamily: FONTS.semiBold,
+                // fontFamily: FONTS.semiBold,
               }}
               onPress={() => {
                 if (!readMore) {

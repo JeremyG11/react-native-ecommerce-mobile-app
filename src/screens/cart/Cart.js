@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 import axios from 'axios'
 import { COLORS } from "../../constants";
 import { NFTData } from '../../constants'
-import PaymentScreen from '../PaymentScreen';
 import CartProduct from './CartProduct';
 import productContext from '../../context/product/productContext';
 
@@ -24,27 +23,61 @@ export default Cart = ({ navigation }) => {
 
   // from Jeremy 
   const [ready, setReady] = useState(false)
-  const { presentPaymentSheet, loading } = usePaymentSheet();
+  const { initPaymentSheet, presentPaymentSheet, loading } = usePaymentSheet();
 
   async function checkOut() {
-
+    console.log("Clicked")
     const { error } = await presentPaymentSheet();
 
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
       Alert.alert('Success', 'Your order is confirmed!');
-      setReady(false)
     }
 
   }
+  const fetchPaymentSheetParams = async () => {
+    try {
+      const res = await axios.post('http://10.4.102.31:6000/api/payment/checkout/session')
+      const { paymentIntent, ephemeralKey, customer } = await res.data;
+
+      return {
+        paymentIntent,
+        ephemeralKey,
+        customer,
+      };
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const initializePaymentSheet = async () => {
+    const {
+      paymentIntent,
+      ephemeralKey,
+      customer,
+    } = await fetchPaymentSheetParams();
+
+    const { error } = await initPaymentSheet({
+      merchantDisplayName: "Example Inc.",
+      customerId: customer,
+      customerEphemeralKeySecret: ephemeralKey,
+      paymentIntentClientSecret: paymentIntent,
+      allowsDelayedPaymentMethods: true,
+      defaultBillingDetails: {
+        name: 'Jeremy T. Nguth',
+      }
+    });
+    if (error) {
+      Alert.alert(`Error code: ${error.code}`, error.message)
+    } else {
+      setReady(true)
+    }
+  };
 
   useEffect(() => {
-    axios.post('http://10.4.110.9:6000/payment-sheet')
-      .then(res => res.json())
-      .then(res => {
-        console.log("Intent", res)
-      })
+    initializePaymentSheet()
+
   }, [])
 
 

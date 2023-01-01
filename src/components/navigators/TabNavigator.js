@@ -19,7 +19,7 @@ const TabNavigator = () => {
         <>
             <Tab.Navigator {...{ screenOptions }}>
                 <Tab.Screen
-                    name="Home"
+                    name="Stack"
                     component={StackNavigator}
                     options={{
                         tabBarLabel: 'Home',

@@ -30,11 +30,11 @@ const HomeHeader = ({ onSearch }) => {
         />
         <TouchableOpacity onPress={() => navigation.navigate("Cart", { user })}>
           <View style={{ width: 45, height: 45 }} >
-            <EvilIcons name ='cart' style={{ 
-              width: "100%", 
+            <EvilIcons name='cart' style={{
+              width: "100%",
               height: "100%",
               fontSize: 55,
-              color:COLORS.white 
+              color: COLORS.white
             }} />
 
           </View>
@@ -65,7 +65,7 @@ const HomeHeader = ({ onSearch }) => {
       <View style={{ marginVertical: SIZES.font }}>
         <Text
           style={{
-            fontFamily: FONTS.regular,
+            // fontFamily: FONTS.regular,
             fontSize: SIZES.small,
             color: COLORS.white,
           }}
@@ -75,7 +75,7 @@ const HomeHeader = ({ onSearch }) => {
 
         <Text
           style={{
-            fontFamily: FONTS.bold,
+            // fontFamily: FONTS.bold,
             fontSize: SIZES.large,
             color: COLORS.white,
             marginTop: SIZES.base / 2,

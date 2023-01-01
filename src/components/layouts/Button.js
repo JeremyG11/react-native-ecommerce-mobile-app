@@ -43,7 +43,7 @@ export const RectButton = ({ minWidth, fontSize, handlePress, ...props }) => {
     >
       <Text
         style={{
-          fontFamily: FONTS.semiBold,
+          // fontFamily: FONTS.semiBold,
           fontSize: fontSize,
           color: COLORS.white,
           textAlign: "center",
@@ -68,7 +68,7 @@ export const RectButton2 = ({ minWidth, fontSize, handlePress, ...props }) => {
     >
       <Text
         style={{
-          fontFamily: FONTS.semiBold,
+          // fontFamily: FONTS.semiBold,
           fontSize: fontSize,
           color: COLORS.white,
           textAlign: "center",
