@@ -1,26 +1,51 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, Text, TouchableOpacity, FlatList, ScrollView, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
+import axios from 'axios'
 import { COLORS } from "../../constants";
 import { NFTData } from '../../constants'
 import PaymentScreen from '../PaymentScreen';
 import CartProduct from './CartProduct';
-
 import productContext from '../../context/product/productContext';
+
+/*
+  Jeremy Imports 
+ */
+import { API_URL } from '../../config/config';
+import { usePaymentSheet } from '@stripe/stripe-react-native';
+import { Button, Alert, } from 'react-native'
+
 
 export default Cart = ({ navigation }) => {
   const ProductContext = useContext(productContext)
   const { cart } = ProductContext
   const products = cart
 
+  // from Jeremy 
+  const [ready, setReady] = useState(false)
+  const { presentPaymentSheet, loading } = usePaymentSheet();
 
+  async function checkOut() {
 
-  // // will be implimented by jermia
-  // const checkOut = () => {
-  //   return navigation(<PaymentScreen />
-  // }
+    const { error } = await presentPaymentSheet();
+
+    if (error) {
+      Alert.alert(`Error code: ${error.code}`, error.message);
+    } else {
+      Alert.alert('Success', 'Your order is confirmed!');
+      setReady(false)
+    }
+
+  }
+
+  useEffect(() => {
+    axios.post('http://10.4.110.9:6000/payment-sheet')
+      .then(res => res.json())
+      .then(res => {
+        console.log("Intent", res)
+      })
+  }, [])
 
 
   return (
@@ -40,7 +65,7 @@ export default Cart = ({ navigation }) => {
       </View>
 
       <View style={styles.checkOutContainer}>
-        <TouchableOpacity onPress={() => { navigation.navigate('Payment') }} style={styles.checkOut}>
+        <TouchableOpacity onPress={checkOut} style={styles.checkOut}>
           <Text style={styles.checkOutText}>
             CHECKOUT ETB 20
           </Text>

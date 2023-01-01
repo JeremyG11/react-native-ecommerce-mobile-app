@@ -1,58 +1,79 @@
-import { CardField, useStripe } from '@stripe/stripe-react-native';
-import { View } from 'react-native'
+import { useState, useEffect } from 'react'
+import { usePaymentSheet } from '@stripe/stripe-react-native';
+import { initPaymentSheet, presentPaymentSheet } from "@stripe/stripe-react-native";
+import { Button, Alert, View, } from 'react-native'
+import { API_URL } from "../config/config";
+
 const PaymentScreen = () => {
-    const API_URL = 'pk_test_51MKMKvFFjUyheLLVZzoxImHRGfvAlZEBHzqGEXBOsgfHCTQrjocOEENXTekseSARA7b2DIxPyZ0zZq2nCKYBEMMC00BZMtbWM4'
-    const fetchPaymentIntentClientSecret = async () => {
-        const response = await fetch(`${API_URL}/create-payment-intent`, {
+    const [ready, setReady] = useState(false)
+    const { initPaymentSheet, presentPaymentSheet, loading } = usePaymentSheet();
+
+
+    useEffect(() => {
+        initializePaymentSheet()
+    }, [])
+    const fetchPaymentSheetParams = async () => {
+        const response = await fetch(`${API_URL}/api/payment/product/checkout/session`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                currency: 'usd',
-            }),
         });
-        const { clientSecret } = await response.json();
-        console.log(response)
-        return clientSecret;
+        const { paymentIntent, ephemeralKey, customer } = await response.json();
+
+        return {
+            paymentIntent,
+            ephemeralKey,
+            customer,
+        };
     };
 
-    const handlePayPress = async () => {
-        if (!card) {
-            return;
+    const initializePaymentSheet = async () => {
+        const {
+            paymentIntent,
+            ephemeralKey,
+            customer,
+        } = await fetchPaymentSheetParams();
+
+        const { error } = await initPaymentSheet({
+            merchantDisplayName: "Baro collections, Inc.",
+            customerId: customer,
+            customerEphemeralKeySecret: ephemeralKey,
+            paymentIntentClientSecret: paymentIntent,
+            allowsDelayedPaymentMethods: true,
+            defaultBillingDetails: {
+                name: 'Jeremy T. Nguth',
+            }
+        });
+        if (error) {
+            Alert.alert(`Error code: ${error.code}`, error.message)
+        } else {
+            setReady(true)
         }
-
-        // Fetch the intent client secret from the backend.
-        const clientSecret = await fetchPaymentIntentClientSecret();
     };
 
+    const openPaymentSheet = async () => {
+        const { error } = await presentPaymentSheet();
+
+        if (error) {
+            Alert.alert(`Error code: ${error.code}`, error.message);
+        } else {
+            Alert.alert('Success', 'Your order is confirmed!');
+        }
+    };
+
+    useEffect(() => {
+        initializePaymentSheet();
+    }, []);
 
     return (
         <View>
-            <CardForm>
-
-                <CardField
-                    postalCodeEnabled={true}
-                    placeholders={{
-                        number: '4242 4242 4242 4242',
-                    }}
-                    cardStyle={{
-                        backgroundColor: '#18a',
-                        textColor: '#000000',
-                    }}
-                    style={{
-                        width: '100%',
-                        height: 200,
-                        marginVertical: 30,
-                    }}
-                    onCardChange={(cardDetails) => {
-                        console.log('cardDetails', cardDetails);
-                    }}
-                    onFocus={(focusedField) => {
-                        console.log('focusField', focusedField);
-                    }}
-                />
-            </CardForm>
+            <Button
+                variant="primary"
+                disabled={loading || !ready}
+                title="Checkout"
+                onPress={openPaymentSheet}
+            />
         </View>
     );
 }
