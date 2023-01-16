@@ -1,19 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { View, Text, TouchableOpacity, FlatList, ScrollView, StyleSheet } from "react-native";
+import { Alert, View, Text, TouchableOpacity, FlatList, ScrollView, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from 'axios'
 import { COLORS } from "../../constants";
 import { NFTData } from '../../constants'
 import CartProduct from './CartProduct';
 import productContext from '../../context/product/productContext';
-
-/*
-  Jeremy Imports 
- */
-import { API_URL } from '../../config/config';
-import { usePaymentSheet } from '@stripe/stripe-react-native';
-import { Button, Alert, } from 'react-native'
 
 
 export default Cart = ({ navigation }) => {
@@ -23,62 +16,31 @@ export default Cart = ({ navigation }) => {
 
   // from Jeremy 
   const [ready, setReady] = useState(false)
-  const { initPaymentSheet, presentPaymentSheet, loading } = usePaymentSheet();
+  const [url, setUrl] = useState('')
 
-  async function checkOut() {
-    console.log("Clicked")
-    const { error } = await presentPaymentSheet();
-
-    if (error) {
-      Alert.alert(`Error code: ${error.code}`, error.message);
-    } else {
-      Alert.alert('Success', 'Your order is confirmed!');
+  const checkOut = async () => {
+    const body = {
+      items: products
     }
 
-  }
-  const fetchPaymentSheetParams = async () => {
     try {
-      const res = await axios.post('http://10.4.102.31:6000/api/payment/checkout/session')
-      const { paymentIntent, ephemeralKey, customer } = await res.data;
-
-      return {
-        paymentIntent,
-        ephemeralKey,
-        customer,
-      };
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const initializePaymentSheet = async () => {
-    const {
-      paymentIntent,
-      ephemeralKey,
-      customer,
-    } = await fetchPaymentSheetParams();
-
-    const { error } = await initPaymentSheet({
-      merchantDisplayName: "Example Inc.",
-      customerId: customer,
-      customerEphemeralKeySecret: ephemeralKey,
-      paymentIntentClientSecret: paymentIntent,
-      allowsDelayedPaymentMethods: true,
-      defaultBillingDetails: {
-        name: 'Jeremy T. Nguth',
+      // console.log(JSON.stringify(body))
+      const res = await axios.post('http://10.4.96.201:6000/api/payment/create-checkout-session', body)
+      const result = await res.data;
+      setUrl(result.url)
+      if (!url) {
+        
       }
-    });
-    if (error) {
-      Alert.alert(`Error code: ${error.code}`, error.message)
-    } else {
-      setReady(true)
+      return navigation.navigate('Payment', { url: url })
+    } catch (error) {
+      console.log("The Error", error)
     }
   };
 
   useEffect(() => {
-    initializePaymentSheet()
+    console.log(url)
 
-  }, [])
+  }, [url])
 
 
   return (
