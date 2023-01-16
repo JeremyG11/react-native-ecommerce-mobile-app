@@ -7,7 +7,6 @@ const ContactSchema = new Schema({
 		ref: 'admin'
 	},
 
-	
 	name: {
 		type: String,
 		required: true
@@ -38,6 +37,10 @@ const ContactSchema = new Schema({
 		type: Date,
 		default: Date.now
 	},
+	quantity: {
+		type: Number,
+		default: 1
+	}
 });
 
 module.exports = mongoose.model('Product', ContactSchema);
