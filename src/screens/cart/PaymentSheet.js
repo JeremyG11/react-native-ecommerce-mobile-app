@@ -5,9 +5,11 @@ import { WebView } from 'react-native-webview'
 
 const PaymentSheet = ({ navigation, route }) => {
   const [url, setUrl] = useState(null)
+
   useEffect(() => {
     console.log("PARAMS", route.params.url)
     setUrl(route.params.url)
+    console.log(url)
   }, [url])
 
 

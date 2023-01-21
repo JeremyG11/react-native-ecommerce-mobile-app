@@ -31,7 +31,7 @@ const App = () => {
   useEffect(() => {
     const getPublishabkeKey = async () => {
       try {
-        const res = await axios.post('http://10.4.102.31:6000/api/payment/checkout/session')
+        const res = await axios.post('http://192.168.43.78:4200/api/payment/checkout/session')
         const { publishableKey } = await res.data;
 
         setPublishableKey(publishableKey)
