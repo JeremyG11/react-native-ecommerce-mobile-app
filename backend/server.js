@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname + 'public')));
 
 app.use(
   cors({
-    origin: "http://192.168.43.78:4200",
+    origin: process.env.CLIENT_URL,
   })
 )
 

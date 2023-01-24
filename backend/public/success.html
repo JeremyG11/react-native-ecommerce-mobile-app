@@ -5,11 +5,27 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href="style.css">
+    <script src="https://kit.fontawesome.com/50c5b4ba34.js" crossorigin="anonymous"></script>
     <title>Document</title>
 </head>
 
-<body>
-    <h3 style="margin-top: 0;">Success</h3>
+<body onload="openPopup()">
+    <div class="container">
+        <div id="popup" class="popup">
+            <div class="icon-success">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h2> Thank You!</h2>
+            <p> <span class="span"> Dear customer</span>, <br> Your payment has been successfully completed</p>
+        </div>
+    </div>
 </body>
+<script>
+    let popup = document.getElementById("popup")
+    function openPopup() {
+        popup.classList.add("open-popup")
+    }
+</script>
 
 </html>
