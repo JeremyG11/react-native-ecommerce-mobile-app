@@ -6,7 +6,7 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { useState, useEffect } from "react";
 
-import { API_URL } from "./src/config/config";
+import { API_URL } from "./src/config/util";
 import { Button, Alert, View } from 'react-native'
 import axios from "axios";
 
@@ -31,7 +31,7 @@ const App = () => {
   useEffect(() => {
     const getPublishabkeKey = async () => {
       try {
-        const res = await axios.post('http://192.168.43.78:4200/api/payment/checkout/session')
+        const res = await axios.post(`${API_URL}/api/payment/checkout/session`)
         const { publishableKey } = await res.data;
 
         setPublishableKey(publishableKey)

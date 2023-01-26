@@ -1,12 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Alert, View, Text, TouchableOpacity, FlatList, ScrollView, StyleSheet } from "react-native";
+import { Alert, View, Text, TouchableOpacity, FlatList, ActivityIndicator, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from 'axios'
 import { COLORS } from "../../constants";
-import { NFTData } from '../../constants'
 import CartProduct from './CartProduct';
 import productContext from '../../context/product/productContext';
+import { API_URL } from '../../config/util';
 
 
 export default Cart = ({ navigation }) => {
@@ -15,7 +15,7 @@ export default Cart = ({ navigation }) => {
   const products = cart
 
   // from Jeremy 
-  const [ready, setReady] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [url, setUrl] = useState('')
 
   const checkOut = async () => {
@@ -24,24 +24,45 @@ export default Cart = ({ navigation }) => {
     }
 
     try {
+      if (body.items.length === 0) {
+
+        Alert.alert(
+          'Cart is empty',
+          'Please add some items! ',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ],
+          { cancelable: false },
+        )
+        return
+      }
+      setLoading(true)
       // console.log(JSON.stringify(body))
-      const res = await axios.post('http://192.168.43.78:4200/api/payment/create-checkout-session', body)
+      const res = await axios.post(`${API_URL}/api/payment/create-checkout-session`, body)
       const result = await res.data;
       setUrl(result.url)
-      if (url) {
-        return navigation.navigate('Payment', { url: url })
-      }else{
-        console.log("loading....")
-      }
+      setLoading(false)
+
     } catch (error) {
       console.log("The Error", error)
+      setLoading(false)
+      setUrl(null)
     }
   };
 
   useEffect(() => {
-    // console.log(url)
+    if (url) {
+      return navigation.navigate('Payment', { url: url })
+    } else {
 
-  }, [url])
+    }
+
+  }, [url, loading])
 
 
   return (
@@ -61,11 +82,19 @@ export default Cart = ({ navigation }) => {
       </View>
 
       <View style={styles.checkOutContainer}>
-        <TouchableOpacity onPress={checkOut} style={styles.checkOut}>
+        <TouchableOpacity
+          onPress={checkOut}
+          style={styles.checkOut}>
           <Text style={styles.checkOutText}>
             CHECKOUT ETB 20
           </Text>
         </TouchableOpacity>
+        <ActivityIndicator
+          animating={loading}
+          color='#bc2b78'
+          size="large"
+          style={styles.activityIndicator}
+        />
       </View>
     </View>
   )
@@ -406,5 +435,11 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     color: COLORS.white,
     textTransform: 'uppercase',
+  },
+  activityIndicator: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 100,
   }
 })
